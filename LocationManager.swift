@@ -11,8 +11,6 @@ import CoreLocation
 
 typealias DoubleCoordinates = (latitude: Double, longitude: Double)
 
-fileprivate let locationUpdateTimeInterval: TimeInterval = 20.0
-
 class LocationManager: NSObject, CLLocationManagerDelegate, TimerRepeatable {
     
     static let shared = LocationManager()
@@ -24,7 +22,6 @@ class LocationManager: NSObject, CLLocationManagerDelegate, TimerRepeatable {
     private override init() {
         super.init()
         locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
     }
     
     private func checkAuthorizationStatus() {
@@ -52,11 +49,12 @@ class LocationManager: NSObject, CLLocationManagerDelegate, TimerRepeatable {
         }
     }
     
-    func startUpdatingLocation() {
+    func startUpdatingLocation(with desiredAccuracy: CLLocationAccuracy = kCLLocationAccuracyNearestTenMeters, timeInterval: TimeInterval = 20.0) {
         checkAuthorizationStatus()
         stopTimer()
+        locationManager.desiredAccuracy = desiredAccuracy
         locationManager.startUpdatingLocation()
-        startTimer(every: locationUpdateTimeInterval)
+        startTimer(every: timeInterval)
     }
     
     func stopUpdatingLocation() {
